@@ -5,7 +5,7 @@ function geojsontoosm(geojson) {
    // Accept a full geojson format FeatureCollection , not only an array of features
    // accept geojson as an object
 
-   // console.log(typeof(geojson));
+   //console.log(typeof(geojson));
    if (typeof geojson === 'string') geojson = JSON.parse(geojson);
    switch (geojson.type) {
         case 'FeatureCollection':
@@ -14,11 +14,11 @@ function geojsontoosm(geojson) {
              for (var i = 0; i < geojson.features.length; i++) {
                   parsed_geojson.push(geojson.features[i]);
              }
-         break;
+        break;
         default:
-             //console.log(geojson.features);
+             //console.log(geojson);
              parsed_geojson = geojson;
-         break;
+        break;
    }
    // console.log(parsed_geojson);
 
@@ -27,14 +27,22 @@ function geojsontoosm(geojson) {
     var nodes = [], nodesIndex = {},
         ways = [],
         relations = [];
+    var filtered_properties;
 
-   features.forEach(function(feature) { // feature can also be a pure GeoJSON geometry object
+    // console.log(features);
+
+    features.forEach(function(feature) { // feature can also be a pure GeoJSON geometry object
         if ( gjcheck.valid(feature) && gjcheck.isFeature(feature) ) {
             //console.log("this is valid GeoJSON!");
             // todo: GeometryCollection?
             var properties = feature.properties || {},
                   geometry = feature.geometry || feature
             // todo: ids if (feature.id && feature.id.match(/^(node|way|relation)\/(\d+)$/)) id = …
+            // console.log(properties);
+            //console.log(typeof(properties));
+            delete properties['osm_id'];
+            //console.log(properties);
+
             switch (geometry.type) {
             case "Point":
                 processPoint(geometry.coordinates, properties, nodes, nodesIndex)
