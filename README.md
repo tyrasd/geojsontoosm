@@ -20,6 +20,7 @@ Usage
 
 * included **a browser**:
         Install browserify globally, probably need sudo:
+
         $ npm install -g browserify
 
         create the js file for the browser: 
