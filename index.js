@@ -1,36 +1,58 @@
 var jxon = require('jxon');
-
+var gjcheck = require('geojson-validation');
 
 function geojsontoosm(geojson) {
-    var features = geojson.features || geojson.length>0 ? geojson : [geojson]
+   // Accept a full geojson format FeatureCollection , not only an array of features
+   // accept geojson as an object
+
+   // console.log(typeof(geojson));
+   if (typeof geojson === 'string') geojson = JSON.parse(geojson);
+   switch (geojson.type) {
+        case 'FeatureCollection':
+             parsed_geojson = [];
+             // console.log(geojson.features);
+             for (var i = 0; i < geojson.features.length; i++) {
+                  parsed_geojson.push(geojson.features[i]);
+             }
+         break;
+        default:
+             //console.log(geojson.features);
+             parsed_geojson = geojson;
+         break;
+   }
+   // console.log(parsed_geojson);
+
+    var features = parsed_geojson.features || parsed_geojson.length>0 ? parsed_geojson : [parsed_geojson]
 
     var nodes = [], nodesIndex = {},
         ways = [],
         relations = [];
 
-    features.forEach(function(feature) { // feature can also be a pure GeoJSON geometry object
-        // todo: GeometryCollection?
-        var properties = feature.properties || {},
-            geometry = feature.geometry || feature
-        // todo: validity check
-        // todo: ids if (feature.id && feature.id.match(/^(node|way|relation)\/(\d+)$/)) id = …
-        switch (geometry.type) {
-        case "Point":
-            processPoint(geometry.coordinates, properties, nodes, nodesIndex)
-        break;
-        case "LineString":
-            processLineString(geometry.coordinates, properties, ways, nodes, nodesIndex)
-        break;
-        case "Polygon":
-            processMultiPolygon([geometry.coordinates], properties, relations, ways, nodes, nodesIndex)
-        break;
-        case "Multipolygon":
-            processMultiPolygon(geometry.coordinates, properties, relations, ways, nodes, nodesIndex)
-        break;
-        default:
-            console.error("unknown or unsupported geometry type:", geometry.type);
-        }
-    });
+   features.forEach(function(feature) { // feature can also be a pure GeoJSON geometry object
+        if ( gjcheck.valid(feature) && gjcheck.isFeature(feature) ) {
+            //console.log("this is valid GeoJSON!");
+            // todo: GeometryCollection?
+            var properties = feature.properties || {},
+                  geometry = feature.geometry || feature
+            // todo: ids if (feature.id && feature.id.match(/^(node|way|relation)\/(\d+)$/)) id = …
+            switch (geometry.type) {
+            case "Point":
+                processPoint(geometry.coordinates, properties, nodes, nodesIndex)
+            break;
+            case "LineString":
+                processLineString(geometry.coordinates, properties, ways, nodes, nodesIndex)
+            break;
+            case "Polygon":
+                processMultiPolygon([geometry.coordinates], properties, relations, ways, nodes, nodesIndex)
+            break;
+            case "Multipolygon":
+                processMultiPolygon(geometry.coordinates, properties, relations, ways, nodes, nodesIndex)
+            break;
+            default:
+                console.error("unknown or unsupported geometry type:", geometry.type);
+            }
+         }
+   });
 
     //console.log(nodes, ways, relations)
     var lastNodeId = -1,

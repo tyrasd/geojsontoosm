@@ -17,3 +17,17 @@ Usage
   
         var geojsontoosm = require('geojsontoosm');
         geojsontoosm(geojson_data);
+
+* included **a browser**:
+        Install browserify globally, probably need sudo:
+        $ npm install -g browserify
+
+        create the js file for the browser: 
+        $ browserify node_modules/geojsontoosm/index.js -d --s geos  > dist/pizza.js
+
+        Now include pizza in your project
+
+        <script src="dist/pizza.js" charset="utf-8"></script>
+
+        And you can call with geos() in your project:
+        var xml = geos(JSON.parse(json));
