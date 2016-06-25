@@ -32,3 +32,7 @@ Usage
 
         And you can call with geos() in your project:
         var xml = geos(JSON.parse(json));
+        
+        or as text
+        
+        var xml = geos(json);
