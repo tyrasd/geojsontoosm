@@ -80,6 +80,7 @@ function geojsontoosm(geojson) {
         osm: {
             "@version": "0.6",
             "@generator": "geojsontoosm",
+            "@upload": "false",
             "node": nodes.map(function(node) {
                 node.id = lastNodeId--
                 return {
