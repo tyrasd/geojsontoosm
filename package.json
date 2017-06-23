@@ -1,7 +1,7 @@
 {
   "name": "geojsontoosm",
-  "version": "0.0.2",
-  "description": "Convert GeoJSON to OSM",
+  "version": "0.0.2b",
+  "description": "Convert GeoJSON to OSM - custom version with checks",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,9 +15,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tyrasd/geojsontoosm.git"
+    "url": "git+https://github.com/gplv2/geojsontoosm.git"
   },
-  "author": "Martin Raifer",
+  "author": "Glenn Plas (forked)",
   "license": "MIT",
   "dependencies": {
     "concat-stream": "^1.5.0",

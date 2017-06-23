@@ -29,10 +29,26 @@ function geojsontoosm(geojson) {
         relations = [];
     var filtered_properties;
 
-    // console.log(features);
+    //console.log(features);
 
     features.forEach(function(feature) { // feature can also be a pure GeoJSON geometry object
         if ( gjcheck.valid(feature) && gjcheck.isFeature(feature) ) {
+            // Check each feature if it crosses another one, if so, do not simplify
+/*
+            console.log('Check for intersects with other objects');
+            if (!checkIntersects(feature, features)) {
+               console.log('This is a loose structure');
+               var tolerance = 15;
+               var simplified = mapshaper.simplify( feature, tolerance);
+               if(gjcheck.valid(simplified)) {
+                  // console.log('Simplified...');
+                  // feature = simplified;
+               }
+            } else {
+               console.log('We seem to share space, not simplifying');
+            }
+*/
+            
             //console.log("this is valid GeoJSON!");
             // todo: GeometryCollection?
             var properties = feature.properties || {},
@@ -201,5 +217,21 @@ function processMultiPolygon(coordinates, properties, relations, ways, nodes, no
         })
     })
 }
+/*
+function checkIntersects(Feature, myFeatures) {
+   // simple area with only 1 ring: -> closed way
+   var intersects = null;
+
+   if (myFeatures.length >= 1 ) {
+
+      myFeatures.forEach(function(polygon) {
+            intersects = turf.intersect(Feature, polygon);
+            if (intersects) {
+               return(intersects);
+            } 
+      });
+   }
+   return(intersects);
+}*/
 
 module.exports = geojsontoosm;
