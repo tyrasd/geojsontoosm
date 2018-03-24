@@ -2,7 +2,7 @@ var jxon = require('jxon');
 
 
 function geojsontoosm(geojson) {
-    var features = geojson.features || geojson.length>0 ? geojson : [geojson]
+    var features = geojson.features || (geojson.length>0 ? geojson : [geojson])
 
     var nodes = [], nodesIndex = {},
         ways = [],
