@@ -1,7 +1,7 @@
 var jxon = require('jxon');
 
 
-function geojsontoosm(geojson) {
+function geojsontoosm(geojson, lastNodeId, lastWayId, lastRelationId) {
     var features = geojson.features || (geojson.length>0 ? geojson : [geojson])
 
     var nodes = [], nodesIndex = {},
@@ -33,9 +33,6 @@ function geojsontoosm(geojson) {
     });
 
     //console.log(nodes, ways, relations)
-    var lastNodeId = -1,
-        lastWayId = -1,
-        lastRelationId = -1
     function jxonTags(tags) {
         var res = []
         for (var k in tags) {
@@ -54,6 +51,8 @@ function geojsontoosm(geojson) {
                 node.id = lastNodeId--
                 return {
                     "@id": node.id,
+                    "@visible": "true",
+                    "@version": "1",
                     "@lat": node.lat,
                     "@lon": node.lon,
                     // todo: meta
@@ -64,6 +63,8 @@ function geojsontoosm(geojson) {
                 way.id = lastWayId--
                 return {
                     "@id": way.id,
+                    "@visible": "true",
+                    "@version": "1",
                     "nd": way.nodes.map(function(nd) { return {"@ref": nd.id} }),
                     "tag": jxonTags(way.tags)
                 }
@@ -72,6 +73,8 @@ function geojsontoosm(geojson) {
                 relation.id = lastRelationId--
                 return {
                     "@id": relation.id,
+                    "@visible": "true",
+                    "@version": "1",
                     "member": relation.members.map(function(member) {
                         return {
                             "@type": member.type,
@@ -117,6 +120,7 @@ function processPoint(coordinates, properties, nodes, nodesIndex) {
 }
 
 function processLineString(coordinates, properties, ways, nodes, nodesIndex) {
+    // TODO: Add ability to pass in tags to append or perform a tag mapping (lua?)
     var way = {
         tags: properties,
         nodes: []
